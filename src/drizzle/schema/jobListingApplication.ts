@@ -8,7 +8,8 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { JobListingTable } from "./jobListing";
-import { UserTable } from "./user";
+// import { UserTable } from "./_user";
+import { user as UserTable } from "./auth";
 import { createdAt, updatedAt } from "../schemaHelpers";
 import { relations } from "drizzle-orm";
 

@@ -6,8 +6,10 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { createdAt, updatedAt } from "../schemaHelpers";
-import { UserTable } from "./user";
-import { OrganizationTable } from "./organization";
+// import { UserTable } from "./_user";
+import { user as UserTable } from "./auth";
+// import { OrganizationTable } from "./_organization";
+import { organization as OrganizationTable } from "./auth";
 import { relations } from "drizzle-orm";
 
 export const OrganizationUserSettingsTable = pgTable(

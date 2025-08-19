@@ -1,16 +1,18 @@
-import { OrganizationTable } from "@/drizzle/schema";
-import { createdAt, id, updatedAt } from "@/drizzle/schemaHelpers";
-import { relations } from "drizzle-orm";
 import {
-  boolean,
-  index,
   integer,
   pgEnum,
   pgTable,
   text,
-  timestamp,
   varchar,
+  boolean,
+  timestamp,
+  index,
 } from "drizzle-orm/pg-core";
+import { createdAt, id, updatedAt } from "../schemaHelpers";
+// import { OrganizationTable } from "./organization";
+import { organization as OrganizationTable } from "./auth";
+
+import { relations } from "drizzle-orm";
 import { JobListingApplicationTable } from "./jobListingApplication";
 
 export const wageIntervals = ["hourly", "yearly"] as const;
@@ -50,13 +52,11 @@ export type JobListingType = (typeof jobListingTypes)[number];
 export const jobListingTypeEnum = pgEnum("job_listings_type", jobListingTypes);
 
 export const JobListingTable = pgTable(
-  "job-listings",
+  "job_listings",
   {
     id,
     organizationId: varchar()
-      .references(() => OrganizationTable.id, {
-        onDelete: "cascade",
-      })
+      .references(() => OrganizationTable.id, { onDelete: "cascade" })
       .notNull(),
     title: varchar().notNull(),
     description: text().notNull(),

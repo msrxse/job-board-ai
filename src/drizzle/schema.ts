@@ -1,5 +1,6 @@
-export * from "@/drizzle/schema/user";
-export * from "./schema/organization";
+export * from "./schema/auth";
+// export * from "@/drizzle/schema/user";
+// export * from "./schema/organization";
 export * from "./schema/jobListing";
 export * from "./schema/userResume";
 export * from "./schema/userNotificationSettings";
