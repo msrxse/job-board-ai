@@ -13,8 +13,11 @@ export default function Logout() {
   };
 
   return (
-    <Button variant="outline" onClick={handleLogout} className="gap-2">
-      Logout <LogOut className="size-4" />
-    </Button>
+    <button
+      onClick={handleLogout}
+      className="flex py-1 ml-1 items-center gap-2"
+    >
+      <LogOut className="size-4" /> Log Out
+    </button>
   );
 }

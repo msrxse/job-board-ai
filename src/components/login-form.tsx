@@ -52,7 +52,7 @@ export function LoginForm({
   const signInWithGoogle = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/dashboard",
+      callbackURL: "/",
     });
   };
 
@@ -62,7 +62,7 @@ export function LoginForm({
 
     if (success) {
       toast.success(message);
-      router.push("/dashboard");
+      router.push("/");
     } else {
       toast.error(message);
     }
