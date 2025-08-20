@@ -1,3 +1,4 @@
+import Logout from "@/components/logout";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -12,8 +13,10 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div>
-      <h1>Welcome {session?.user.name}</h1>
+    <div className="h-screen flex flex-col items-center justify-center max-w-2xl mx-auto">
+      <h1 className="font-bold text-2xl">Welcome {session?.user.name}</h1>
+      <p>This is your dashboard</p>
+      <Logout />
     </div>
   );
 }
