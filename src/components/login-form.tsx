@@ -2,6 +2,10 @@
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,9 +27,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { signIn } from "../../server/users";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -45,6 +47,13 @@ export function LoginForm({
       password: "",
     },
   });
+
+  const signInWithGoogle = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    });
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -122,7 +131,12 @@ export function LoginForm({
                       "Login"
                     )}
                   </Button>
-                  <Button variant="outline" className="w-full">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={signInWithGoogle}
+                  >
                     Login with Google
                   </Button>
                 </div>
