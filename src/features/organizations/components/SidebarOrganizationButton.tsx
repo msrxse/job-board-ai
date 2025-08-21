@@ -1,8 +1,8 @@
-import { SidebarUserButtonClient } from "./_SidebarUserButtonClient";
+import { SidebarOrganizationButtonClient } from "./_SidebarOrganizationButtonClient";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
 import Logout from "@/components/logout";
 import { Suspense } from "react";
-import { getCurrentUser } from "@/services/betterAuth/lib/getCurrentAuth";
+import { getCurrentOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
 
 /**
  * To avoid this problem: (only in this canary version of NextJS)
@@ -10,18 +10,18 @@ import { getCurrentUser } from "@/services/betterAuth/lib/getCurrentAuth";
  * Error: Route "/employer": A component accessed data, headers, params, searchParams, or
  * a short-lived cache without a Suspense boundary nor a "use cache" above it.
  */
-export function SidebarUserButton() {
+export function SidebarOrganizationButton() {
   return (
     <Suspense>
-      <SidebarUserSuspense />
+      <SidebarOrganizationSuspense />
     </Suspense>
   );
 }
 
-export async function SidebarUserSuspense() {
-  const { user } = await getCurrentUser({ allData: true });
+export async function SidebarOrganizationSuspense() {
+  const { organization } = await getCurrentOrganization({ allData: true });
 
-  if (!user) {
+  if (!organization) {
     return (
       <SidebarMenuButton asChild>
         <Logout />
@@ -30,6 +30,8 @@ export async function SidebarUserSuspense() {
   }
 
   return (
-    <SidebarUserButtonClient user={{ ...user, image: user.image || "" }} />
+    <SidebarOrganizationButtonClient
+      organization={{ ...organization, image: organization.image || "" }}
+    />
   );
 }

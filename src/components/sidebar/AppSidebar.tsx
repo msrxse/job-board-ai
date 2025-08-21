@@ -2,17 +2,24 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebarClient } from "@/app/_AppSidebarClient";
-import { SidebarUserButton } from "@/features/users/components/SidebarUserButton";
+import { AppSidebarClient } from "@/components/sidebar/_AppSidebarClient";
+import { ReactNode } from "react";
 
-export default function HomePage() {
+export default function AppSidebar({
+  children,
+  content,
+  footerButton,
+}: {
+  children: ReactNode;
+  content: ReactNode;
+  footerButton: ReactNode;
+}) {
   return (
     <SidebarProvider className="overflow-y-hidden">
       <AppSidebarClient>
@@ -21,20 +28,14 @@ export default function HomePage() {
             <SidebarTrigger />
             <span className="text-xl text-nowrap">Job board</span>
           </SidebarHeader>
-          <SidebarContent>
-            <SidebarGroup>
-              <SidebarMenu></SidebarMenu>
-            </SidebarGroup>
-          </SidebarContent>
+          <SidebarContent>{content}</SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarUserButton />
-              </SidebarMenuItem>
+              <SidebarMenuItem>{footerButton}</SidebarMenuItem>
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
-        <main className="flex-1">Main content</main>
+        <main className="flex-1">{children}</main>
       </AppSidebarClient>
     </SidebarProvider>
   );

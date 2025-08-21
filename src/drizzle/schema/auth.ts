@@ -6,6 +6,10 @@ import { OrganizationUserSettingsTable } from "@/drizzle/schema/organizationUser
 import { UserResumeTable } from "./userResume";
 import { UserNotificationSettingsTable } from "./userNotificationSettings";
 
+export const accountType = ["user", "organization"] as const;
+export type AccountType = (typeof accountType)[number];
+export const accountTypeEnum = pgEnum("user_account_type", accountType);
+
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -14,6 +18,7 @@ export const user = pgTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
+  type: accountTypeEnum().notNull().default("user"),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
