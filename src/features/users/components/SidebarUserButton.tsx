@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { SidebarUserButtonClient } from "./_SidebarUserButtonClient";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import Logout from "@/components/logout";
 
 export async function SidebarUserButton() {
   const session = await auth.api.getSession({
@@ -8,7 +11,11 @@ export async function SidebarUserButton() {
   });
 
   if (!session) {
-    return null;
+    return (
+      <SidebarMenuButton>
+        <Logout />
+      </SidebarMenuButton>
+    );
   }
 
   return (

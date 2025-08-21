@@ -62,7 +62,7 @@ export function SidebarUserButtonClient({ user }: { user: User }) {
           Profile
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild onClick={() => openUserProfile()}>
+        <DropdownMenuItem asChild>
           <Link href="/user-settings/notifications">
             <SettingsIcon className="mr-1" />
             Settings
