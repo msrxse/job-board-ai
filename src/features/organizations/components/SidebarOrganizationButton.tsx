@@ -2,7 +2,10 @@ import { SidebarOrganizationButtonClient } from "./_SidebarOrganizationButtonCli
 import { SidebarMenuButton } from "@/components/ui/sidebar";
 import Logout from "@/components/logout";
 import { Suspense } from "react";
-import { getCurrentOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
+import {
+  getCurrentOrganization,
+  getCurrentUser,
+} from "@/services/betterAuth/lib/getCurrentAuth";
 
 /**
  * To avoid this problem: (only in this canary version of NextJS)
@@ -19,9 +22,12 @@ export function SidebarOrganizationButton() {
 }
 
 export async function SidebarOrganizationSuspense() {
-  const { organization } = await getCurrentOrganization({ allData: true });
+  const [user, organization] = await Promise.all([
+    getCurrentUser(),
+    getCurrentOrganization(),
+  ]);
 
-  if (!organization) {
+  if (!organization || !user) {
     return (
       <SidebarMenuButton asChild>
         <Logout />
@@ -31,7 +37,8 @@ export async function SidebarOrganizationSuspense() {
 
   return (
     <SidebarOrganizationButtonClient
-      organization={{ ...organization, image: organization.image || "" }}
+      user={{ ...user, image: user.image || "" }}
+      organization={{ ...organization, logo: organization.logo || "" }}
     />
   );
 }

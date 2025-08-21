@@ -22,7 +22,6 @@ import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
-  type: string;
   name: string;
   image: string;
   email: string;

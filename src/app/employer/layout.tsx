@@ -6,15 +6,29 @@ import {
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import { SidebarOrganizationButton } from "@/features/organizations/components/SidebarOrganizationButton";
-import { SidebarUserButton } from "@/features/users/components/SidebarUserButton";
+import { getCurrentOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
 import { Clipboard, PlusIcon } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
-export default function EmployerSeekerLayout({
+export default function EmployerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  return (
+    <Suspense>
+      <LayoutSuspense>{children}</LayoutSuspense>
+    </Suspense>
+  );
+}
+
+async function LayoutSuspense({ children }: { children: React.ReactNode }) {
+  const organization = await getCurrentOrganization();
+
+  if (!organization) return redirect("/organizations/select");
+
   return (
     <AppSidebar
       content={

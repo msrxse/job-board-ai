@@ -19,7 +19,7 @@ export function SidebarUserButton() {
 }
 
 export async function SidebarUserSuspense() {
-  const { user } = await getCurrentUser({ allData: true });
+  const user = await getCurrentUser();
 
   if (!user) {
     return (
