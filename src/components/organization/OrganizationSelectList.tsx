@@ -1,5 +1,7 @@
 "use client";
 
+import OrganizationListCard from "@/components/organization/OrganizationListCard";
+import PersonalAccountListCard from "@/components/organization/PersonalAccountListCard";
 import {
   Card,
   CardAction,
@@ -10,6 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Organization, User } from "@/drizzle/schema";
+import { PlusCircleIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function OrganizationSelectList({
   organizations,
@@ -27,11 +31,24 @@ export default function OrganizationSelectList({
         <CardDescription>Card Description</CardDescription>
         <CardAction>Card Action</CardAction>
       </CardHeader>
-      <CardContent>
-        <p>Card Content</p>
+      <CardContent className="flex flex-col gap-4">
+        <PersonalAccountListCard user={user} />
+        <h2 className="text-lg font-bold">Your organizations</h2>
+        {organizations.map((org) => (
+          <OrganizationListCard
+            key={org.id}
+            organization={org}
+            activeOrgId={activeOrg ? activeOrg.id : ""}
+          />
+        ))}
       </CardContent>
       <CardFooter>
-        <p>Card Footer</p>
+        <Link href="/organizations/create">
+          <div className="flex items-center gap-2 border rounded-lg px-4 py-2 hover:bg-muted">
+            <PlusCircleIcon size={17} />
+            <p>Create Organization</p>
+          </div>
+        </Link>
       </CardFooter>
     </Card>
   );

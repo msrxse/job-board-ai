@@ -8,7 +8,6 @@ import {
 import { SidebarOrganizationButton } from "@/features/organizations/components/SidebarOrganizationButton";
 import { Clipboard, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 export default function EmployerLayout({
