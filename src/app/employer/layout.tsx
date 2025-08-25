@@ -27,8 +27,6 @@ export default function EmployerLayout({
 async function LayoutSuspense({ children }: { children: React.ReactNode }) {
   const organization = await getCurrentOrganization();
 
-  if (!organization) return redirect("/organizations/select");
-
   return (
     <AppSidebar
       content={

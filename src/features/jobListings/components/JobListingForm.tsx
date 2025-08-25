@@ -58,7 +58,7 @@ export function JobListingForm() {
 
   async function onSubmit(data: z.infer<typeof jobListingSchema>) {
     await new Promise((res) => setTimeout(res, 1000));
-    console.log(data);
+    // console.log(data);
   }
 
   return (

@@ -1,19 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -114,97 +104,95 @@ export default function OrganizationCreateForm() {
   }
 
   return (
-    <div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Create Organization</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-4">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="rounded-sm size-20">
-                      <AvatarImage src={preview} />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col gap-2">
-                      <FormField
-                        control={form.control}
-                        name="file"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Logo</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="file"
-                                accept="image/png,image/jpeg"
-                                onChange={(e) => {
-                                  // Temporarily set the preview with the selected file
-                                  const file = e.target.files?.[0];
-                                  if (file) {
-                                    const objectUrl = URL.createObjectURL(file);
-                                    setPreview(objectUrl);
-                                  }
-                                  return field.onChange(e.target.files);
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <p className="text-sm text-muted-foreground">
-                        Recommended size 1:1, upto 2MB
-                      </p>
-                    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Create Organization</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-4">
+                <div className="flex items-center gap-4">
+                  <Avatar className="rounded-sm size-20">
+                    <AvatarImage src={preview} />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col gap-2">
+                    <FormField
+                      control={form.control}
+                      name="file"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Logo</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="file"
+                              accept="image/png,image/jpeg"
+                              onChange={(e) => {
+                                // Temporarily set the preview with the selected file
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const objectUrl = URL.createObjectURL(file);
+                                  setPreview(objectUrl);
+                                }
+                                return field.onChange(e.target.files);
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Recommended size 1:1, upto 2MB
+                    </p>
                   </div>
                 </div>
-                <div className="grid gap-4">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="My Organization" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-4">
-                  <FormField
-                    control={form.control}
-                    name="slug"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl>
-                          <Input placeholder="my-org" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex flex-col items-end">
-                  <Button type="submit" variant="outline" disabled={isLoading}>
-                    {isLoading ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      "Create Organization"
-                    )}
-                  </Button>
-                </div>
               </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+              <div className="grid gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="My Organization" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-4">
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input placeholder="my-org" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex flex-col items-end">
+                <Button type="submit" variant="outline" disabled={isLoading}>
+                  {isLoading ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    "Create Organization"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

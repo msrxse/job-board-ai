@@ -23,7 +23,7 @@ async function SuspendedPage() {
   const jobListing = await getMostRecentJobListing(id);
 
   if (jobListing == null) {
-    redirect("/employer/job-listing/new");
+    redirect("/employer/job-listings/new");
   } else {
     redirect(`/employer/job-listings/${jobListing.id}`);
   }
