@@ -60,7 +60,7 @@ export default function OrganizationCreateForm() {
     formData.append("file", data.file[0]);
     formData.append("name", data.name);
 
-    // TODO: Save data to organizations  - relative to the current user as well.
+    // Save data to organizations  - relative to the current user as well.
     const res = await fetch("/api/upload", {
       method: "POST",
       body: formData,
@@ -86,10 +86,16 @@ export default function OrganizationCreateForm() {
     try {
       setIsLoading(true);
 
-      await authClient.organization.create({
+      const { data: newOrg } = await authClient.organization.create({
         logo: result.url || "",
         name: data.name,
         slug: data.slug,
+      });
+
+      // Set that organization as active in the session table
+      await authClient.organization.setActive({
+        organizationId: newOrg?.id,
+        organizationSlug: newOrg?.slug,
       });
 
       toast.success("Organization created successfully");

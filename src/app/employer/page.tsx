@@ -1,7 +1,7 @@
 import { db } from "@/drizzle/db";
 import { JobListingTable } from "@/drizzle/schema";
 import { getJobListingOrganizationTag } from "@/features/jobListings/db/cache/JobListings";
-import { getCurrentOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
+import { getActiveOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
 import { desc, eq } from "drizzle-orm";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { redirect } from "next/navigation";
@@ -16,11 +16,11 @@ export default function EmployerHomePage() {
 }
 
 async function SuspendedPage() {
-  const { id } = await getCurrentOrganization();
+  const activeOrg = await getActiveOrganization();
 
-  if (id == null) return null;
+  if (activeOrg == null) return null;
 
-  const jobListing = await getMostRecentJobListing(id);
+  const jobListing = await getMostRecentJobListing(activeOrg.id);
 
   if (jobListing == null) {
     redirect("/employer/job-listings/new");

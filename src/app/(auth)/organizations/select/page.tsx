@@ -1,5 +1,6 @@
 import OrganizationSelectList from "@/components/organization/OrganizationSelectList";
 import {
+  getActiveOrganization,
   getAllOrganizationsByUser,
   getCurrentUser,
 } from "@/services/betterAuth/lib/getCurrentAuth";
@@ -14,17 +15,19 @@ export default function OrganizationSelectPage() {
 }
 
 async function SuspendedPage() {
-  // const data = await getAllOrganizationsByUser();
-  // const user = await getCurrentUser();
-
-  const [user, orgs] = await Promise.all([
+  const [user, orgs, activeOrg] = await Promise.all([
     getCurrentUser(),
     getAllOrganizationsByUser(),
+    getActiveOrganization(),
   ]);
 
   return (
     <div className="w-full max-w-sm">
-      <OrganizationSelectList organizations={orgs} user={user} />
+      <OrganizationSelectList
+        organizations={orgs}
+        user={user}
+        activeOrg={activeOrg}
+      />
     </div>
   );
 }

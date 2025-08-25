@@ -1,9 +1,6 @@
 import { db } from "@/drizzle/db";
 import { member, organization, user } from "@/drizzle/schema";
-import {
-  getOrganizationIdTag,
-  getOrganizationGlobalTag,
-} from "@/features/organizations/db/cache/organizations";
+import { getOrganizationGlobalTag } from "@/features/organizations/db/cache/organizations";
 import { getUserIdTag } from "@/features/users/db/cache/users";
 import { auth } from "@/lib/auth";
 import { eq, inArray, sql } from "drizzle-orm";
@@ -21,16 +18,16 @@ export async function getCurrentUser() {
   return await getUser(userId);
 }
 
-export async function getCurrentOrganization() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+// export async function getCurrentOrganization() {
+//   const session = await auth.api.getSession({
+//     headers: await headers(),
+//   });
 
-  if (!session) throw new Error("Not authenticated");
-  const userId = session.user.id;
+//   if (!session) throw new Error("Not authenticated");
+//   const userId = session.user.id;
 
-  return await getOrganization(userId);
-}
+//   return await getOrganization(userId);
+// }
 
 export async function getAllOrganizationsByUser() {
   const session = await auth.api.getSession({
@@ -43,6 +40,29 @@ export async function getAllOrganizationsByUser() {
   return await getAllOrganizations(userId);
 }
 
+/**
+ * By default getFullOrganization will use the active organization.
+ */
+export async function getActiveOrganization() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) throw new Error("Not authenticated");
+
+  const data = await auth.api.getFullOrganization({
+    headers: await headers(),
+  });
+  if (data == null) return null;
+
+  return {
+    id: data.id,
+    name: data.name,
+    slug: data.slug || null,
+    logo: data.logo || null,
+  };
+}
+
 export async function getUser(id: string) {
   "use cache";
   cacheTag(getUserIdTag(id));
@@ -52,23 +72,23 @@ export async function getUser(id: string) {
   });
 }
 
-export async function getOrganization(id: string) {
-  "use cache";
-  cacheTag(getOrganizationIdTag(id));
+// export async function getOrganization(id: string) {
+//   "use cache";
+//   cacheTag(getOrganizationIdTag(id));
 
-  const orgs = await db
-    .select({
-      id: organization.id,
-      name: organization.name,
-      logo: organization.logo,
-    })
-    .from(member)
-    .innerJoin(organization, eq(member.organizationId, organization.id))
-    .where(eq(member.userId, id));
+//   const orgs = await db
+//     .select({
+//       id: organization.id,
+//       name: organization.name,
+//       logo: organization.logo,
+//     })
+//     .from(member)
+//     .innerJoin(organization, eq(member.organizationId, organization.id))
+//     .where(eq(member.userId, id));
 
-  const org = orgs[0] ?? null;
-  return org;
-}
+//   const org = orgs[0] ?? null;
+//   return org;
+// }
 
 export async function getAllOrganizations(id: string) {
   "use cache";
@@ -92,7 +112,7 @@ export async function getAllOrganizations(id: string) {
     })
     .from(organization)
     .where(
-      userOrgs.length > 0 ? inArray(organization.id, userOrgIds) : sql`true`
+      userOrgs.length > 0 ? inArray(organization.id, userOrgIds) : sql`false`
     );
 
   return result;

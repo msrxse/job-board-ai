@@ -14,9 +14,11 @@ import { Organization, User } from "@/drizzle/schema";
 export default function OrganizationSelectList({
   organizations,
   user,
+  activeOrg,
 }: {
   organizations: Pick<Organization, "id" | "name" | "slug" | "logo">[];
-  user: Pick<User, "id" | "name" | "email" | "image"> | undefined;
+  user: User | undefined;
+  activeOrg: Pick<Organization, "id" | "name" | "slug" | "logo"> | null;
 }) {
   return (
     <Card>

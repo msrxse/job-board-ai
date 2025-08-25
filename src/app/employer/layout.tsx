@@ -6,7 +6,6 @@ import {
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import { SidebarOrganizationButton } from "@/features/organizations/components/SidebarOrganizationButton";
-import { getCurrentOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
 import { Clipboard, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -25,8 +24,6 @@ export default function EmployerLayout({
 }
 
 async function LayoutSuspense({ children }: { children: React.ReactNode }) {
-  const organization = await getCurrentOrganization();
-
   return (
     <AppSidebar
       content={

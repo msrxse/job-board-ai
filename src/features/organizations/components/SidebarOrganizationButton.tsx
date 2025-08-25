@@ -3,7 +3,7 @@ import { SidebarMenuButton } from "@/components/ui/sidebar";
 import Logout from "@/components/logout";
 import { Suspense } from "react";
 import {
-  getCurrentOrganization,
+  getActiveOrganization,
   getCurrentUser,
 } from "@/services/betterAuth/lib/getCurrentAuth";
 
@@ -24,7 +24,7 @@ export function SidebarOrganizationButton() {
 export async function SidebarOrganizationSuspense() {
   const [user, organization] = await Promise.all([
     getCurrentUser(),
-    getCurrentOrganization(),
+    getActiveOrganization(),
   ]);
 
   if (!organization || !user) {
