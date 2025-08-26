@@ -22,11 +22,15 @@ import {
 } from "@/components/ui/select";
 import {
   experienceLevels,
+  JobListingTable,
   jobListingTypes,
   locationRequirements,
   wageIntervals,
 } from "@/drizzle/schema";
-import { createJobListing } from "@/features/jobListings/actions/actions";
+import {
+  createJobListing,
+  updateJobListing,
+} from "@/features/jobListings/actions/actions";
 import { jobListingSchema } from "@/features/jobListings/actions/schemas";
 import { StateSelectItems } from "@/features/jobListings/components/StateSelectItems";
 import {
@@ -42,10 +46,26 @@ import z from "zod";
 
 const NONE_SELECT_VALUE = "none";
 
-export function JobListingForm() {
+export function JobListingForm({
+  jobListing,
+}: {
+  jobListing: Pick<
+    typeof JobListingTable.$inferSelect,
+    | "title"
+    | "description"
+    | "id"
+    | "stateAbbreviation"
+    | "type"
+    | "wage"
+    | "wageInterval"
+    | "city"
+    | "locationRequirement"
+    | "experienceLevel"
+  >;
+}) {
   const form = useForm({
     resolver: zodResolver(jobListingSchema),
-    defaultValues: {
+    defaultValues: jobListing ?? {
       title: "",
       description: "",
       stateAbbreviation: null,
@@ -59,8 +79,13 @@ export function JobListingForm() {
   });
 
   async function onSubmit(data: z.infer<typeof jobListingSchema>) {
+    const action = jobListing
+      ? updateJobListing.bind(null, jobListing.id)
+      : createJobListing;
+
     await new Promise((res) => setTimeout(res, 1000));
-    const res = await createJobListing(data);
+
+    const res = await action(data);
 
     if (res.error) {
       toast.error(res.error);
