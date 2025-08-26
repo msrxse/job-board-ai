@@ -26,6 +26,7 @@ import {
   locationRequirements,
   wageIntervals,
 } from "@/drizzle/schema";
+import { createJobListing } from "@/features/jobListings/actions/actions";
 import { jobListingSchema } from "@/features/jobListings/actions/schemas";
 import { StateSelectItems } from "@/features/jobListings/components/StateSelectItems";
 import {
@@ -36,6 +37,7 @@ import {
 } from "@/features/jobListings/lib/formatters";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const NONE_SELECT_VALUE = "none";
@@ -58,7 +60,11 @@ export function JobListingForm() {
 
   async function onSubmit(data: z.infer<typeof jobListingSchema>) {
     await new Promise((res) => setTimeout(res, 1000));
-    // console.log(data);
+    const res = await createJobListing(data);
+
+    if (res.error) {
+      toast.error(res.error);
+    }
   }
 
   return (

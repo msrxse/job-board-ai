@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Organization } from "@/drizzle/schema/auth";
-import { auth } from "@/lib/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
 import { redirect } from "next/navigation";
@@ -36,6 +35,7 @@ export default function OrganizationListCard({
         organizationId: organization.id,
         organizationSlug: organization.slug || "",
       });
+
       toast.success("Organization select successfully");
     } catch (error) {
       console.log(error);

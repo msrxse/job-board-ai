@@ -1,12 +1,8 @@
-"use client";
-
-import OrganizationListCard from "@/components/organization/OrganizationListCard";
-import PersonalAccountListCard from "@/components/organization/PersonalAccountListCard";
+import OrganizationListCard from "@/features/organizations/components/OrganizationListCard";
+import PersonalAccountListCard from "@/features/organizations/components/PersonalAccountListCard";
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -27,9 +23,7 @@ export default function OrganizationSelectList({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Card Title</CardTitle>
-        <CardDescription>Card Description</CardDescription>
-        <CardAction>Card Action</CardAction>
+        <CardTitle>Organizations</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <PersonalAccountListCard user={user} />
