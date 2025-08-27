@@ -4,6 +4,12 @@ import { betterAuth } from "better-auth";
 import { db } from "@/drizzle/db"; // your drizzle instance
 import { nextCookies } from "better-auth/next-js";
 import { env } from "@/data/env/client";
+import {
+  ac,
+  admin,
+  applicant_manager,
+  job_listing_manager,
+} from "@/drizzle/permissions";
 
 export const auth = betterAuth({
   socialProviders: {
@@ -18,5 +24,15 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
-  plugins: [organization(), nextCookies()], // make sure this is the last plugin in the array
+  plugins: [
+    organization({
+      ac,
+      roles: {
+        admin,
+        applicant_manager,
+        job_listing_manager,
+      },
+    }),
+    nextCookies(),
+  ], // make sure this is the last plugin in the array
 });
