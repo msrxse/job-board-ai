@@ -10,6 +10,7 @@ import {
   applicant_manager,
   job_listing_manager,
 } from "@/drizzle/permissions";
+import { getFirstOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
 
 export const auth = betterAuth({
   socialProviders: {
@@ -35,4 +36,19 @@ export const auth = betterAuth({
     }),
     nextCookies(),
   ], // make sure this is the last plugin in the array
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const organization = await getFirstOrganization(session.userId);
+          return {
+            data: {
+              ...session,
+              activeOrganizationId: organization?.id,
+            },
+          };
+        },
+      },
+    },
+  },
 });

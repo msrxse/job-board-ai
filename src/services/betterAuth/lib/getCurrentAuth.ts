@@ -53,6 +53,7 @@ export async function getActiveOrganization() {
   const data = await auth.api.getFullOrganization({
     headers: await headers(),
   });
+
   if (data == null) return null;
 
   return {
@@ -116,4 +117,20 @@ export async function getAllOrganizations(id: string) {
     );
 
   return result;
+}
+
+export async function getFirstOrganization(userId: string) {
+  const memberUser = await db.query.member.findFirst({
+    where: eq(member.userId, userId),
+  });
+
+  if (!memberUser) {
+    return null;
+  }
+
+  const activeOrganization = await db.query.organization.findFirst({
+    where: eq(organization.id, memberUser.organizationId),
+  });
+
+  return activeOrganization;
 }

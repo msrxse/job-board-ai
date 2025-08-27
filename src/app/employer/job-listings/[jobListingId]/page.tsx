@@ -1,15 +1,30 @@
+import { AsyncIf } from "@/components/AsyncIf";
 import { MarkdownPartial } from "@/components/markdown/MarkdownPartial";
 import { MarkdownRenderer } from "@/components/markdown/MarkdownRenderer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { db } from "@/drizzle/db";
-import { JobListingTable } from "@/drizzle/schema";
+import { JobListingStatus, JobListingTable } from "@/drizzle/schema";
 import { JobListingBadges } from "@/features/jobListings/components/JobListingBadges";
 import { getJobListingIdTag } from "@/features/jobListings/db/cache/JobListings";
 import { formatJobListingStatus } from "@/features/jobListings/lib/formatters";
+import { hasReachedMaxFeaturedJobListings } from "@/features/jobListings/lib/planFeatureHelpers";
+import { getNextJobListingStatus } from "@/features/jobListings/lib/utils";
 import { getActiveOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
+import { hasOrgUserPermission } from "@/services/betterAuth/lib/orgUserPermissions";
 import { and, eq } from "drizzle-orm";
-import { EditIcon } from "lucide-react";
+import {
+  EditIcon,
+  EyeIcon,
+  EyeOffIcon,
+  StarIcon,
+  StarOffIcon,
+} from "lucide-react";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -54,12 +69,17 @@ async function SuspendedPage({ params }: Props) {
           </div>
         </div>
         <div className="flex items-center gap-2 empty:-mt-4">
-          <Button asChild variant="outline">
-            <Link href={`/employer/job-listings/${jobListing.id}/edit`}>
-              <EditIcon className="size-4" />
-              Edit
-            </Link>
-          </Button>
+          <AsyncIf
+            condition={() => hasOrgUserPermission({ job_listings: ["update"] })}
+          >
+            <Button asChild variant="outline">
+              <Link href={`/employer/job-listings/${jobListing.id}/edit`}>
+                <EditIcon className="size-4" />
+                Edit
+              </Link>
+            </Button>
+          </AsyncIf>
+          <StatusUpdateButton status={jobListing.status} />
         </div>
       </div>
       <MarkdownPartial
@@ -76,6 +96,47 @@ async function SuspendedPage({ params }: Props) {
   );
 }
 
+function StatusUpdateButton({ status }: { status: JobListingStatus }) {
+  const button = (
+    <Button variant="outline">{statusToggleButtonText(status)}</Button>
+  );
+  return (
+    <AsyncIf
+      condition={() =>
+        hasOrgUserPermission({ job_listings: ["change_status"] })
+      }
+    >
+      {getNextJobListingStatus(status) === "published" ? (
+        <AsyncIf
+          condition={async () => {
+            const isMaxed = await hasReachedMaxFeaturedJobListings();
+            return !isMaxed;
+          }}
+          otherwise={
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">
+                  {statusToggleButtonText(status)}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="flex flex-col gap-2">
+                You must upgrade your plan to feature more job listings.
+                <Button asChild>
+                  <Link href="/employer/pricing">Upgrade Plan</Link>
+                </Button>
+              </PopoverContent>
+            </Popover>
+          }
+        >
+          {button}
+        </AsyncIf>
+      ) : (
+        button
+      )}
+    </AsyncIf>
+  );
+}
+
 async function getJobListing({ id, orgId }: { id: string; orgId: string }) {
   "use cache";
   cacheTag(getJobListingIdTag(id));
@@ -86,4 +147,26 @@ async function getJobListing({ id, orgId }: { id: string; orgId: string }) {
       eq(JobListingTable.organizationId, orgId)
     ),
   });
+}
+
+function statusToggleButtonText(status: JobListingStatus) {
+  switch (status) {
+    case "delisted":
+    case "draft":
+      return (
+        <>
+          <EyeIcon className="size-4" />
+          Publish
+        </>
+      );
+    case "published":
+      return (
+        <>
+          <EyeOffIcon className="size-4" />
+          Delist
+        </>
+      );
+    default:
+      throw new Error(`Unknown status: ${status satisfies never}`);
+  }
 }

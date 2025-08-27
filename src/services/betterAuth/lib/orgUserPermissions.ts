@@ -13,10 +13,12 @@ type UserPermission =
   | (BasePermission & { job_listings: JobListings[] });
 
 export async function hasOrgUserPermission(permission: UserPermission) {
-  await auth.api.hasPermission({
+  const { success } = await auth.api.hasPermission({
     headers: await headers(),
     body: {
-      permissions: { ...permission },
+      permissions: permission,
     },
   });
+
+  return success;
 }

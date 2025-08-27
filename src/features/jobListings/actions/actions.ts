@@ -9,6 +9,7 @@ import {
   updateJobListing as updateJobListingDb,
 } from "@/features/jobListings/db/JobListing";
 import { getActiveOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
+import { hasOrgUserPermission } from "@/services/betterAuth/lib/orgUserPermissions";
 import { and, eq } from "drizzle-orm";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import { redirect } from "next/navigation";
@@ -19,7 +20,10 @@ export async function createJobListing(
 ) {
   const organization = await getActiveOrganization();
 
-  if (organization == null) {
+  if (
+    organization == null ||
+    !(await hasOrgUserPermission({ job_listings: ["create"] }))
+  ) {
     return {
       error: true,
       message: "You don't have permission to create a job listing",
@@ -50,10 +54,13 @@ export async function updateJobListing(
 ) {
   const organization = await getActiveOrganization();
 
-  if (organization == null) {
+  if (
+    organization == null ||
+    !(await hasOrgUserPermission({ job_listings: ["update"] }))
+  ) {
     return {
       error: true,
-      message: "You don't have permission to create a job listing",
+      message: "You don't have permission to update a job listing",
     };
   }
 
