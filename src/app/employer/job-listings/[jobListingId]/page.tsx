@@ -110,7 +110,7 @@ function StatusUpdateButton({ status }: { status: JobListingStatus }) {
         <AsyncIf
           condition={async () => {
             const isMaxed = await hasReachedMaxFeaturedJobListings();
-            return !isMaxed;
+            return isMaxed;
           }}
           otherwise={
             <Popover>

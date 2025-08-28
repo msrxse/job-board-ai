@@ -18,7 +18,7 @@ import {
   UserRoundCog,
 } from "lucide-react";
 import Link from "next/link";
-import Logout from "@/components/logout";
+import Logout from "@/services/betterAuth/components/logout";
 import { useRouter } from "next/navigation";
 
 interface User {

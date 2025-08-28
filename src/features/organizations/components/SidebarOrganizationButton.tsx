@@ -1,6 +1,6 @@
 import { SidebarOrganizationButtonClient } from "./_SidebarOrganizationButtonClient";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import Logout from "@/components/logout";
+import Logout from "@/services/betterAuth/components/logout";
 import { Suspense } from "react";
 import {
   getActiveOrganization,

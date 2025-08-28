@@ -1,6 +1,6 @@
 import { SidebarUserButtonClient } from "./_SidebarUserButtonClient";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import Logout from "@/components/logout";
+import Logout from "@/services/betterAuth/components/logout";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/services/betterAuth/lib/getCurrentAuth";
 
