@@ -8,7 +8,10 @@ import {
   insertJobListing,
   updateJobListing as updateJobListingDb,
 } from "@/features/jobListings/db/JobListing";
-import { hasReachedMaxPublishedJobListings } from "@/features/jobListings/lib/planFeatureHelpers";
+import {
+  hasReachedMaxFeaturedJobListings,
+  hasReachedMaxPublishedJobListings,
+} from "@/features/jobListings/lib/planFeatureHelpers";
 import { getNextJobListingStatus } from "@/features/jobListings/lib/utils";
 import { getActiveOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
 import { hasOrgUserPermission } from "@/services/betterAuth/lib/orgUserPermissions";
@@ -115,6 +118,33 @@ export async function toggleJobListingStatus(id: string) {
       newStatus === "published" && jobListing.postedAt == null
         ? new Date()
         : undefined,
+  });
+
+  return { error: false };
+}
+
+export async function toggleJobListingFeatured(id: string) {
+  const error = {
+    error: true,
+    message:
+      "You don't have permission to update this job listing's featured status",
+  };
+  const organization = await getActiveOrganization();
+  if (organization == null) return error;
+
+  const jobListing = await getJobListing({ id, orgId: organization.id });
+  if (jobListing == null) return error;
+
+  const newFeaturedStatus = jobListing.isFeatured;
+  if (
+    !(await hasOrgUserPermission({ job_listings: ["change_status"] })) ||
+    (newFeaturedStatus && (await hasReachedMaxFeaturedJobListings()))
+  ) {
+    return error;
+  }
+
+  await updateJobListingDb(id, {
+    isFeatured: newFeaturedStatus,
   });
 
   return { error: false };

@@ -12,10 +12,29 @@ export async function hasReachedMaxPublishedJobListings() {
 
   const count = await getPublishedJobListingsCount(organization.id);
 
+  // we fake user has first plan so after publishing one job the upgrade message appears
   const canFeature = await Promise.all([
     hasPlanFeature("post_1_job_listing").then((has) => has && count < 1),
-    hasPlanFeature("post_3_job_listings").then((has) => has && count < 3),
-    hasPlanFeature("post_15_job_listings").then((has) => has && count < 15),
+    // hasPlanFeature("post_3_job_listings").then((has) => has && count < 3),
+    // hasPlanFeature("post_15_job_listings").then((has) => has && count < 15),
+  ]);
+
+  // is any value in this array equal to TRUE?
+  return !canFeature.some(Boolean);
+}
+
+export async function hasReachedMaxFeaturedJobListings() {
+  const organization = await getActiveOrganization();
+  if (organization == null) return true;
+
+  const count = await getFeaturedJobListingsCount(organization.id);
+
+  // we fake user has second plan so after publishing one job the upgrade message appears
+  const canFeature = await Promise.all([
+    hasPlanFeature("1_featured_job_listing").then((has) => has && count < 1),
+    hasPlanFeature("unlimited_featured_job_listings").then(
+      (has) => has && count < 3
+    ),
   ]);
 
   // is any value in this array equal to TRUE?
@@ -33,6 +52,22 @@ async function getPublishedJobListingsCount(orgId: string) {
       and(
         eq(JobListingTable.organizationId, orgId),
         eq(JobListingTable.status, "published")
+      )
+    );
+  return res?.count ?? 0;
+}
+
+async function getFeaturedJobListingsCount(orgId: string) {
+  "use cache";
+  cacheTag(getJobListingOrganizationTag(orgId));
+
+  const [res] = await db
+    .select({ count: count() })
+    .from(JobListingTable)
+    .where(
+      and(
+        eq(JobListingTable.organizationId, orgId),
+        eq(JobListingTable.isFeatured, true)
       )
     );
   return res?.count ?? 0;
