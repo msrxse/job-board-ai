@@ -12,6 +12,7 @@ import {
 import { db } from "@/drizzle/db";
 import { JobListingStatus, JobListingTable } from "@/drizzle/schema";
 import {
+  deleteJobListing,
   toggleJobListingFeatured,
   toggleJobListingStatus,
 } from "@/features/jobListings/actions/actions";
@@ -32,6 +33,7 @@ import {
   EyeOffIcon,
   StarIcon,
   StarOffIcon,
+  Trash2Icon,
 } from "lucide-react";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 import Link from "next/link";
@@ -94,6 +96,18 @@ async function SuspendedPage({ params }: Props) {
               id={jobListing.id}
             />
           )}
+          <AsyncIf
+            condition={() => hasOrgUserPermission({ job_listings: ["delete"] })}
+          >
+            <ActionButton
+              variant="destructive"
+              action={deleteJobListing.bind(null, jobListing.id)}
+              requireAreYouSure
+            >
+              <Trash2Icon className="size-4" />
+              Delete
+            </ActionButton>
+          </AsyncIf>
         </div>
       </div>
       <MarkdownPartial

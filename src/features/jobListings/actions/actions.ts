@@ -7,6 +7,7 @@ import { getJobListingIdTag } from "@/features/jobListings/db/cache/JobListings"
 import {
   insertJobListing,
   updateJobListing as updateJobListingDb,
+  deleteJobListing as deleteJobListingDb,
 } from "@/features/jobListings/db/JobListing";
 import {
   hasReachedMaxFeaturedJobListings,
@@ -148,6 +149,26 @@ export async function toggleJobListingFeatured(id: string) {
   });
 
   return { error: false };
+}
+
+export async function deleteJobListing(id: string) {
+  const error = {
+    error: true,
+    message: "You don't have permission to delete this job listing",
+  };
+  const organization = await getActiveOrganization();
+  if (organization == null) return error;
+
+  const jobListing = await getJobListing({ id, orgId: organization.id });
+  if (jobListing == null) return error;
+
+  if (!(await hasOrgUserPermission({ job_listings: ["delete"] }))) {
+    return error;
+  }
+
+  await deleteJobListingDb(id);
+
+  redirect("/employer");
 }
 
 async function getJobListing({ id, orgId }: { id: string; orgId: string }) {
