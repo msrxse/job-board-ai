@@ -8,6 +8,8 @@ import {
   insertJobListing,
   updateJobListing as updateJobListingDb,
 } from "@/features/jobListings/db/JobListing";
+import { hasReachedMaxPublishedJobListings } from "@/features/jobListings/lib/planFeatureHelpers";
+import { getNextJobListingStatus } from "@/features/jobListings/lib/utils";
 import { getActiveOrganization } from "@/services/betterAuth/lib/getCurrentAuth";
 import { hasOrgUserPermission } from "@/services/betterAuth/lib/orgUserPermissions";
 import { and, eq } from "drizzle-orm";
@@ -73,7 +75,7 @@ export async function updateJobListing(
     };
   }
 
-  const jobListing = getJobListing({ id, orgId: organization.id });
+  const jobListing = await getJobListing({ id, orgId: organization.id });
 
   if (jobListing == null) {
     return {
@@ -85,6 +87,40 @@ export async function updateJobListing(
   const updatedJobListing = await updateJobListingDb(id, data);
 
   redirect(`/employer/job-listings/${updatedJobListing.id}`);
+}
+
+export async function toggleJobListingStatus(id: string) {
+  const error = {
+    error: true,
+    message: "You don't have permission to create this job listing status",
+  };
+  const organization = await getActiveOrganization();
+
+  if (organization == null) return error;
+
+  const jobListing = await getJobListing({ id, orgId: organization.id });
+
+  if (jobListing == null) return error;
+
+  const newStatus = getNextJobListingStatus(jobListing.status);
+
+  if (
+    !(await hasOrgUserPermission({ job_listings: ["change_status"] })) ||
+    (newStatus === "published" && (await hasReachedMaxPublishedJobListings()))
+  ) {
+    return error;
+  }
+
+  await updateJobListingDb(id, {
+    status: newStatus,
+    isFeatured: newStatus === "published" ? undefined : false,
+    postedAt:
+      newStatus === "published" && jobListing.postedAt === null
+        ? new Date()
+        : undefined,
+  });
+
+  return { error: false };
 }
 
 async function getJobListing({ id, orgId }: { id: string; orgId: string }) {

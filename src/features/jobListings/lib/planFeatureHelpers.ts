@@ -6,7 +6,7 @@ import { hasPlanFeature } from "@/services/betterAuth/lib/planFeatures";
 import { and, count, eq } from "drizzle-orm";
 import { cacheTag } from "next/dist/server/use-cache/cache-tag";
 
-export async function hasReachedMaxFeaturedJobListings() {
+export async function hasReachedMaxPublishedJobListings() {
   const organization = await getActiveOrganization();
   if (organization == null) return true;
 
