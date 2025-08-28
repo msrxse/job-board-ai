@@ -92,18 +92,15 @@ export async function updateJobListing(
 export async function toggleJobListingStatus(id: string) {
   const error = {
     error: true,
-    message: "You don't have permission to create this job listing status",
+    message: "You don't have permission to update this job listing's status",
   };
   const organization = await getActiveOrganization();
-
   if (organization == null) return error;
 
   const jobListing = await getJobListing({ id, orgId: organization.id });
-
   if (jobListing == null) return error;
 
   const newStatus = getNextJobListingStatus(jobListing.status);
-
   if (
     !(await hasOrgUserPermission({ job_listings: ["change_status"] })) ||
     (newStatus === "published" && (await hasReachedMaxPublishedJobListings()))
@@ -115,7 +112,7 @@ export async function toggleJobListingStatus(id: string) {
     status: newStatus,
     isFeatured: newStatus === "published" ? undefined : false,
     postedAt:
-      newStatus === "published" && jobListing.postedAt === null
+      newStatus === "published" && jobListing.postedAt == null
         ? new Date()
         : undefined,
   });

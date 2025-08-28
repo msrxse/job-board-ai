@@ -107,7 +107,7 @@ function StatusUpdateButton({
       requireAreYouSure={getNextJobListingStatus(status) === "published"}
       areYouSureDescription="This will immediately show this job to all users."
     >
-      statusToggleButtonText(status)
+      {statusToggleButtonText(status)}
     </ActionButton>
   );
 
